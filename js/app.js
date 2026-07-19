@@ -269,6 +269,21 @@ function buyPlan(name, kind) {
     <button class="btn btn-primary btn-lg" onclick="confirmPurchase()" style="width:100%;">Start Free Trial (Demo)</button>`;
   openModal('checkoutModal');
 }
+/* $20 one-time Starter Systems Pack — no login needed (impulse buy) */
+function buyPack() {
+  document.getElementById('checkoutBody').innerHTML = `
+    <div class="checkout-line"><span>Starter Systems Pack — 3 PDFs</span><span>$20 one-time</span></div>
+    <div class="checkout-line"><span>Instant download</span><span>Included</span></div>
+    <div class="checkout-total"><span>Due today</span><span>$20.00</span></div>
+    <p style="color:var(--muted); font-size:0.82rem; margin-bottom:14px;">
+      One-time payment — instant access to all three guides. <br>
+      Demo checkout — no real payment is taken. Connect Stripe (STRIPE-SETUP.md) to sell for real.
+    </p>
+    <button class="btn btn-primary btn-lg" onclick="unlockPack()" style="width:100%;">Get my downloads (Demo)</button>`;
+  openModal('checkoutModal');
+}
+function unlockPack() { closeModal('checkoutModal'); window.location.href = 'downloads.html'; }
+
 function confirmPurchase() {
   if (!pendingPlan || !session) return;
   if (!plans.some(p => p.name === pendingPlan.name)) {
