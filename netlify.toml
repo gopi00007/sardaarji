@@ -1,0 +1,6 @@
+# Netlify configuration for SARDAARJI
+# This is a plain static site (no build step), served from the repo root.
+
+[build]
+  publish = "."
+  command = ""
