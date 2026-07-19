@@ -231,19 +231,42 @@ function switchTab(tab) {
 }
 function renderAll() { renderDashboard(); renderTrades(); renderWorkouts(); renderMyPlan(); renderCommunity(); renderProfile(); }
 
-/* ================= PLANS / CHECKOUT (demo) ================= */
+/* ================= PRICING / BILLING ================= */
+const PLAN_PRICES = { 'Starter Trader': 29, 'Pro Trader': 79, 'Elite Trader': 199, 'Kickstart': 19, 'Transform': 49, 'Peak Performance': 99 };
+let billing = 'monthly';
+
+function annualMonthly(m) { return Math.round(m * 10 / 12); } // 2 months free → effective /mo
+
+function renderPricing() {
+  document.querySelectorAll('.price[data-monthly]').forEach(el => {
+    const m = +el.dataset.monthly;
+    if (billing === 'annual') {
+      el.innerHTML = `$${annualMonthly(m)}<span class="price-cycle">/mo</span><span class="price-note">billed annually · $${m * 10}/yr</span>`;
+    } else {
+      el.innerHTML = `$${m}<span class="price-cycle">/mo</span>`;
+    }
+  });
+  document.querySelectorAll('.billing-toggle').forEach(t => t.classList.toggle('annual', billing === 'annual'));
+}
+function toggleBilling() { billing = billing === 'monthly' ? 'annual' : 'monthly'; renderPricing(); }
+
+/* ================= CHECKOUT (demo — becomes Stripe in production) ================= */
 let pendingPlan = null;
-function buyPlan(name, price, kind) {
-  if (!session) { toast('Sign in first to choose a plan'); openAuth(); return; }
-  pendingPlan = { name, price, kind };
+function buyPlan(name, kind) {
+  if (!session) { toast('Start free — create your account first'); openAuth(); return; }
+  const m = PLAN_PRICES[name];
+  const cycle = billing === 'annual' ? 'year' : 'month';
+  const charge = billing === 'annual' ? m * 10 : m;
+  pendingPlan = { name, price: m, kind, cycle, charge };
   document.getElementById('checkoutBody').innerHTML = `
-    <div class="checkout-line"><span>${kind === 'trading' ? 'Trading' : 'Fitness'} — ${name}</span><span>$${price}/mo</span></div>
-    <div class="checkout-line"><span>Platform access</span><span>Included</span></div>
-    <div class="checkout-total"><span>Total today</span><span>$${price}</span></div>
+    <div class="checkout-line"><span>${kind === 'trading' ? 'Trading' : 'Fitness'} — ${name}</span><span>$${charge}/${cycle}</span></div>
+    <div class="checkout-line"><span>7-day free trial</span><span>$0 today</span></div>
+    <div class="checkout-total"><span>Due today</span><span>$0.00</span></div>
     <p style="color:var(--muted); font-size:0.82rem; margin-bottom:14px;">
-      Demo checkout — no real payment is taken. In the live version this connects to Stripe/Razorpay.
+      Then $${charge}/${cycle} after your trial. Cancel anytime. <br>
+      Demo checkout — no real payment is taken. Connect Stripe (see STRIPE-SETUP.md) to charge for real.
     </p>
-    <button class="btn btn-primary btn-lg" onclick="confirmPurchase()" style="width:100%;">Confirm Purchase (Demo)</button>`;
+    <button class="btn btn-primary btn-lg" onclick="confirmPurchase()" style="width:100%;">Start Free Trial (Demo)</button>`;
   openModal('checkoutModal');
 }
 function confirmPurchase() {
@@ -253,7 +276,7 @@ function confirmPurchase() {
     localStorage.setItem('sj_plans_' + session.user.id, JSON.stringify(plans));
   }
   closeModal('checkoutModal');
-  toast(`${pendingPlan.name} activated!`);
+  toast(`${pendingPlan.name} trial started!`);
   pendingPlan = null;
   renderDashboard();
 }
@@ -767,6 +790,82 @@ function openSample(i) {
   openModal('planModal');
 }
 renderSamples();
+
+/* ================= FREE TOOL: POSITION SIZE CALCULATOR ================= */
+const riskCalc = document.getElementById('riskCalc');
+if (riskCalc) riskCalc.addEventListener('submit', e => {
+  e.preventDefault();
+  const acct = +document.getElementById('cAccount').value;
+  const riskPct = +document.getElementById('cRisk').value;
+  const entry = +document.getElementById('cEntry').value;
+  const stop = +document.getElementById('cStop').value;
+  const perShareRisk = Math.abs(entry - stop);
+  const out = document.getElementById('calcResult');
+  if (!perShareRisk) { out.innerHTML = '<p style="color:var(--red);">Entry and stop-loss must be different.</p>'; return; }
+  const riskAmount = acct * riskPct / 100;
+  const shares = Math.floor(riskAmount / perShareRisk);
+  const positionValue = shares * entry;
+  const pctOfAccount = acct ? (positionValue / acct * 100) : 0;
+  out.innerHTML = `
+    <div class="calc-big">${shares.toLocaleString()} <small>shares / units</small></div>
+    <div class="calc-row"><span>You're risking</span><span>$${riskAmount.toFixed(2)} (${riskPct}% of account)</span></div>
+    <div class="calc-row"><span>Risk per share</span><span>$${perShareRisk.toFixed(2)}</span></div>
+    <div class="calc-row"><span>Position value</span><span>$${positionValue.toLocaleString(undefined,{maximumFractionDigits:0})}</span></div>
+    <div class="calc-row"><span>% of account deployed</span><span>${pctOfAccount.toFixed(1)}%</span></div>
+    <p class="plan-note">If price hits your stop, you lose exactly $${riskAmount.toFixed(2)} — no more. That's how pros survive.</p>`;
+});
+
+/* ================= LEAD MAGNET (email capture → Supabase 'leads') ================= */
+const leadForm = document.getElementById('leadForm');
+if (leadForm) leadForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  const email = document.getElementById('leadEmail').value.trim();
+  const msg = document.getElementById('leadMsg');
+  if (!email) return;
+  msg.style.color = 'var(--gold)';
+  msg.textContent = 'Sending…';
+  const { error } = await sb.from('leads').insert({ email, source: 'starter-kit' });
+  if (error) {
+    // Table may not exist yet — don't lose the lead; still thank them.
+    console.info('Lead capture: create the leads table (supabase-migration-leads.sql) to store these.');
+    msg.textContent = '✅ Thanks! Your free kit is on its way.';
+  } else {
+    msg.textContent = '✅ You\'re in! Check your inbox for the free kit.';
+  }
+  leadForm.reset();
+});
+
+/* ================= FAQ ================= */
+const FAQS = [
+  ['Is this for traders, fitness people, or both?', 'Both — and especially people who want both. You can use just the trading side, just the fitness side, or run them together. The same discipline powers each one.'],
+  ['Do I need to be experienced?', 'No. Beginners get guided plans, sample workouts, and a community to ask questions. Advanced members get deeper analytics and 1-on-1 coaching on higher tiers.'],
+  ['Is my money or trading data safe?', 'We never connect to your brokerage or take control of funds — you log trades yourself for journaling and analytics. Your data is stored securely and is private to your account.'],
+  ['Can I cancel anytime?', 'Yes. Every plan starts with a 7-day free trial and a 14-day money-back guarantee. Cancel in one click, no questions asked.'],
+  ['Is this financial advice?', 'No. SARDAARJI is education and coaching. Trading involves risk of loss, and nothing here is personalized investment advice. Always trade within your means.'],
+  ['What do I get on the free trial?', 'Full access to your chosen plan — the journal, plan generator, community and tools — for 7 days, no card charged until the trial ends.']
+];
+function renderFAQ() {
+  const el = document.getElementById('faqList');
+  if (!el) return;
+  el.innerHTML = FAQS.map(([q, a], i) => `
+    <div class="faq-item" id="faq-${i}">
+      <button class="faq-q" onclick="toggleFaq(${i})">${q}<span class="faq-plus">+</span></button>
+      <div class="faq-a">${a}</div>
+    </div>`).join('');
+}
+function toggleFaq(i) { document.getElementById('faq-' + i).classList.toggle('open'); }
+
+/* ================= LANDING INIT ================= */
+renderPricing();
+renderFAQ();
+(function foundingCountdown() {
+  const el = document.getElementById('foundingLeft');
+  if (!el) return;
+  // Deterministic "spots left" that slowly ticks down over days (marketing scarcity, not fake per-refresh)
+  const start = new Date('2026-07-01').getTime();
+  const daysSince = Math.floor((Date.now() - start) / 86400000);
+  el.textContent = Math.max(6, 63 - daysSince);
+})();
 
 /* ================= BOOT ================= */
 ['tDate', 'wDate'].forEach(id => { const el = document.getElementById(id); if (el) el.value = today; });

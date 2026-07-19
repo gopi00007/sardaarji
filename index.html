@@ -3,7 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SARDAARJI — Fitness & Trading Coach</title>
+<title>SARDAARJI — Fitness & Trading Coach | Master Your Money & Body</title>
+<meta name="description" content="Premium coaching for traders and athletes. Journal your trades, get a personalized meal & workout plan, and join a disciplined community. Start free — no card required.">
+<meta name="keywords" content="trading coach, fitness coach, trade journal, meal plan generator, workout plan, trading education, online personal training, position size calculator">
+<meta name="author" content="Sardaarji Coaching">
+<meta property="og:title" content="SARDAARJI — Fitness & Trading Coach">
+<meta property="og:description" content="Master your money. Master your body. Trade journaling, personalized fitness plans, and a community that holds you to a higher standard.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://fitnessandtradingcoach.netlify.app/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SARDAARJI — Fitness & Trading Coach">
+<meta name="twitter:description" content="Master your money. Master your body. One platform for traders and athletes.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
@@ -17,6 +28,12 @@
 
 <!-- ============ LANDING PAGE ============ -->
 <div id="landing">
+
+  <!-- FOUNDING MEMBER BANNER -->
+  <div class="announce-bar" id="announceBar">
+    <span>🚀 <b>Founding Member offer</b> — first 100 members lock in <b>30% off for life</b>. <span id="foundingLeft">37</span> spots left.</span>
+    <button class="announce-close" onclick="document.getElementById('announceBar').style.display='none'" aria-label="Close">✕</button>
+  </div>
 
   <nav class="nav">
     <div class="nav-logo">SARDAAR<span>JI</span></div>
@@ -87,40 +104,75 @@
       </div>
     </div>
 
+    <div class="billing-toggle" data-billing-group>
+      <span class="bt-label">Monthly</span>
+      <button class="bt-switch" onclick="toggleBilling()" aria-label="Toggle billing"><span class="bt-knob"></span></button>
+      <span class="bt-label">Annual <span class="bt-save">save 17%</span></span>
+    </div>
+
     <div class="cards">
       <div class="card reveal">
         <h3>Starter Trader</h3>
-        <div class="price">$29<span>/mo</span></div>
+        <div class="price" data-monthly="29"></div>
         <ul>
           <li>Trade journal & P/L tracking</li>
           <li>Win-rate analytics</li>
           <li>Weekly market outlook</li>
           <li>Community access</li>
         </ul>
-        <button class="btn btn-outline" onclick="buyPlan('Starter Trader', 29, 'trading')">Choose Plan</button>
+        <button class="btn btn-outline" onclick="buyPlan('Starter Trader', 'trading')">Start free trial</button>
       </div>
       <div class="card card-featured reveal">
         <div class="card-badge">MOST POPULAR</div>
         <h3>Pro Trader</h3>
-        <div class="price">$79<span>/mo</span></div>
+        <div class="price" data-monthly="79"></div>
         <ul>
           <li>Everything in Starter</li>
           <li>Equity curve & risk analytics</li>
           <li>Live trading room sessions</li>
           <li>Direct Q&A with Sardaarji</li>
         </ul>
-        <button class="btn btn-primary" onclick="buyPlan('Pro Trader', 79, 'trading')">Choose Plan</button>
+        <button class="btn btn-primary" onclick="buyPlan('Pro Trader', 'trading')">Start free trial</button>
       </div>
       <div class="card reveal">
         <h3>Elite Trader</h3>
-        <div class="price">$199<span>/mo</span></div>
+        <div class="price" data-monthly="199"></div>
         <ul>
           <li>Everything in Pro</li>
           <li>1-on-1 monthly coaching call</li>
           <li>Custom trading system review</li>
           <li>Priority support</li>
         </ul>
-        <button class="btn btn-outline" onclick="buyPlan('Elite Trader', 199, 'trading')">Choose Plan</button>
+        <button class="btn btn-outline" onclick="buyPlan('Elite Trader', 'trading')">Start free trial</button>
+      </div>
+    </div>
+    <p class="guarantee-line">✓ 7-day free trial &nbsp;·&nbsp; ✓ 14-day money-back guarantee &nbsp;·&nbsp; ✓ Cancel anytime</p>
+  </section>
+
+  <!-- FREE TRADING TOOL -->
+  <section class="section" id="tools">
+    <div class="section-center">
+      <div class="section-tag">FREE TOOL</div>
+      <h2 class="section-title">Position Size Calculator</h2>
+      <p class="section-sub center">The #1 rule of trading is protecting your capital. Enter your numbers and
+      we'll tell you exactly how many shares/contracts to buy so a losing trade never hurts more than you allow.</p>
+    </div>
+    <div class="calc-wrap">
+      <div class="panel glass calc-panel">
+        <form id="riskCalc" class="form form-grid">
+          <label>Account size ($)
+            <input type="number" id="cAccount" placeholder="e.g. 10000" min="1" required></label>
+          <label>Risk per trade (%)
+            <input type="number" id="cRisk" placeholder="e.g. 1" min="0.1" max="100" step="0.1" value="1" required></label>
+          <label>Entry price ($)
+            <input type="number" id="cEntry" placeholder="e.g. 100" min="0" step="any" required></label>
+          <label>Stop-loss price ($)
+            <input type="number" id="cStop" placeholder="e.g. 97" min="0" step="any" required></label>
+          <button class="btn btn-primary" type="submit" style="grid-column:1/-1;">Calculate Position Size</button>
+        </form>
+      </div>
+      <div class="panel glass calc-result" id="calcResult">
+        <p style="color:var(--muted);">Your recommended position size and risk breakdown will appear here.</p>
       </div>
     </div>
   </section>
@@ -146,42 +198,49 @@
       </div>
     </div>
 
+    <div class="billing-toggle" data-billing-group>
+      <span class="bt-label">Monthly</span>
+      <button class="bt-switch" onclick="toggleBilling()" aria-label="Toggle billing"><span class="bt-knob"></span></button>
+      <span class="bt-label">Annual <span class="bt-save alt">save 17%</span></span>
+    </div>
+
     <div class="cards">
       <div class="card reveal">
         <h3>Kickstart</h3>
-        <div class="price">$19<span>/mo</span></div>
+        <div class="price" data-monthly="19"></div>
         <ul>
           <li>Workout log & streak tracking</li>
           <li>Smart recommendations</li>
           <li>Beginner program library</li>
           <li>Community access</li>
         </ul>
-        <button class="btn btn-outline alt" onclick="buyPlan('Kickstart', 19, 'fitness')">Choose Plan</button>
+        <button class="btn btn-outline alt" onclick="buyPlan('Kickstart', 'fitness')">Start free trial</button>
       </div>
       <div class="card card-featured alt reveal">
         <div class="card-badge alt">MOST POPULAR</div>
         <h3>Transform</h3>
-        <div class="price">$49<span>/mo</span></div>
+        <div class="price" data-monthly="49"></div>
         <ul>
           <li>Everything in Kickstart</li>
           <li>Custom meal guidance</li>
           <li>Progress analytics</li>
           <li>Direct Q&A with Sardaarji</li>
         </ul>
-        <button class="btn btn-primary alt" onclick="buyPlan('Transform', 49, 'fitness')">Choose Plan</button>
+        <button class="btn btn-primary alt" onclick="buyPlan('Transform', 'fitness')">Start free trial</button>
       </div>
       <div class="card reveal">
         <h3>Peak Performance</h3>
-        <div class="price">$99<span>/mo</span></div>
+        <div class="price" data-monthly="99"></div>
         <ul>
           <li>Everything in Transform</li>
           <li>1-on-1 monthly video coaching</li>
           <li>Fully personalized programming</li>
           <li>Priority support</li>
         </ul>
-        <button class="btn btn-outline alt" onclick="buyPlan('Peak Performance', 99, 'fitness')">Choose Plan</button>
+        <button class="btn btn-outline alt" onclick="buyPlan('Peak Performance', 'fitness')">Start free trial</button>
       </div>
     </div>
+    <p class="guarantee-line">✓ 7-day free trial &nbsp;·&nbsp; ✓ 14-day money-back guarantee &nbsp;·&nbsp; ✓ Cancel anytime</p>
 
     <!-- FREE SAMPLE PLANS (public) -->
     <div class="section-center" style="margin-top:80px;">
@@ -219,17 +278,50 @@
     </div>
   </section>
 
+  <!-- LEAD MAGNET -->
+  <section class="section" id="freeguide">
+    <div class="lead-magnet glass reveal">
+      <div class="lm-copy">
+        <div class="section-tag">FREE GUIDE</div>
+        <h2 class="section-title">The Disciplined Trader &amp; Athlete Starter Kit</h2>
+        <p class="section-sub">Get our free PDF: the 7 rules that protect your capital, plus a 1-week
+        beginner training split. Drop your email and we'll send it over.</p>
+      </div>
+      <form id="leadForm" class="lead-form">
+        <input type="email" id="leadEmail" placeholder="you@email.com" required>
+        <button class="btn btn-primary" type="submit">Send me the free kit</button>
+        <p id="leadMsg" class="lead-msg"></p>
+      </form>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq">
+    <div class="section-center">
+      <div class="section-tag">FAQ</div>
+      <h2 class="section-title">Questions, answered.</h2>
+    </div>
+    <div class="faq-list" id="faqList"></div>
+  </section>
+
   <!-- CTA BANNER -->
   <section class="cta-banner reveal">
     <h2>Your future self is watching.</h2>
-    <p>Start logging. Start growing. Join thousands who train both muscles.</p>
-    <button class="btn btn-dark btn-lg" onclick="openOnboarding()">Start Your Journey</button>
+    <p>Start free today. No card required. Cancel anytime.</p>
+    <button class="btn btn-dark btn-lg" onclick="openOnboarding()">Start Your Free Trial</button>
   </section>
 
   <footer class="footer">
     <div class="nav-logo">SARDAAR<span>JI</span></div>
-    <p>Fitness & Trading Coach — Master your money. Master your body.</p>
-    <p class="footer-fine">© 2026 Sardaarji Coaching. Demo prototype — payments are simulated.</p>
+    <p>Fitness &amp; Trading Coach — Master your money. Master your body.</p>
+    <div class="footer-links">
+      <a href="disclaimer.html">Risk &amp; Health Disclaimer</a>
+      <a href="terms.html">Terms of Service</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="#freeguide">Free Guide</a>
+    </div>
+    <p class="footer-fine">© 2026 Sardaarji Coaching. Trading involves risk of loss. Not financial advice.
+    Consult a physician before starting any fitness program.</p>
   </footer>
 </div>
 
