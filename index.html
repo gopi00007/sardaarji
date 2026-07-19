@@ -28,6 +28,7 @@
 
 <!-- ============ LANDING PAGE ============ -->
 <div id="landing">
+  <span id="top"></span>
 
   <!-- FOUNDING MEMBER BANNER -->
   <div class="announce-bar" id="announceBar">
@@ -36,13 +37,16 @@
   </div>
 
   <nav class="nav">
-    <div class="nav-logo">SARDAAR<span>JI</span></div>
-    <div class="nav-links">
-      <a href="#trading">Trading</a>
-      <a href="#fitness">Fitness</a>
-      <a href="#community">Community</a>
+    <a href="#top" class="nav-logo" onclick="closeNav()">SARDAAR<span>JI</span></a>
+    <button class="nav-toggle" id="navToggle" onclick="toggleNav()" aria-label="Open menu">☰</button>
+    <div class="nav-links" id="navLinks">
+      <a href="#trading" onclick="closeNav()">Trading</a>
+      <a href="#fitness" onclick="closeNav()">Fitness</a>
+      <a href="#pack" onclick="closeNav()">$20 Pack</a>
+      <a href="#tools" onclick="closeNav()">Free Tools</a>
+      <a href="#faq" onclick="closeNav()">FAQ</a>
+      <button class="btn btn-primary nav-cta" onclick="openOnboarding(); closeNav()">Log In / Sign Up</button>
     </div>
-    <button class="btn btn-primary" onclick="openOnboarding()">Launch App</button>
   </nav>
 
   <!-- HERO -->

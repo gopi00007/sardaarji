@@ -100,7 +100,11 @@ const revealObserver = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
 }, { threshold: 0.15 });
 document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
-function scrollToSection(id) { document.getElementById(id).scrollIntoView({ behavior: 'smooth' }); }
+function scrollToSection(id) { document.getElementById(id).scrollIntoView({ behavior: 'smooth' }); closeNav(); }
+
+/* Mobile navigation menu */
+function toggleNav() { document.getElementById('navLinks').classList.toggle('open'); }
+function closeNav() { const n = document.getElementById('navLinks'); if (n) n.classList.remove('open'); }
 
 /* ---- Parallax ---- */
 const parallaxEls = document.querySelectorAll('[data-parallax]');
