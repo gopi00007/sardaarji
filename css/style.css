@@ -509,6 +509,38 @@ input::placeholder, textarea::placeholder { color: var(--muted); }
   background: rgba(232, 180, 76, 0.08);
 }
 
+/* ---- My Plan: form grid ---- */
+.form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.form-grid label { display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; color: var(--muted); font-weight: 600; }
+@media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } }
+
+/* ---- Meal list ---- */
+.meal-list { display: flex; flex-direction: column; gap: 12px; }
+.meal-row { border: 1px solid var(--glass-border); border-radius: 12px; padding: 14px 16px; background: rgba(255,255,255,0.02); }
+.meal-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+.meal-name { font-weight: 700; }
+.meal-kcal { color: var(--gold); font-size: 0.85rem; font-weight: 600; }
+.meal-food { color: var(--muted); font-size: 0.92rem; line-height: 1.5; }
+.plan-note { color: var(--muted); font-size: 0.82rem; margin-top: 14px; font-style: italic; }
+
+/* ---- Workout grid ---- */
+.workout-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+.workout-day { border: 1px solid var(--glass-border); border-radius: 12px; padding: 16px; background: rgba(255,255,255,0.02); }
+.wd-head { font-weight: 700; font-size: 0.92rem; margin-bottom: 10px; }
+.wd-head span { color: var(--gold); font-weight: 600; }
+.workout-day ul { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+.workout-day li { color: var(--muted); font-size: 0.86rem; padding-left: 14px; position: relative; }
+.workout-day li::before { content: '▸'; position: absolute; left: 0; color: var(--gold); }
+.wd-cardio { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--glass-border); font-size: 0.82rem; color: var(--muted); }
+
+/* ---- Sample plan cards ---- */
+.sample-emoji { font-size: 2.2rem; }
+.sample-tag { display: inline-block; align-self: flex-start; font-size: 0.72rem; font-weight: 700; letter-spacing: 1px;
+  padding: 4px 12px; border-radius: 999px; background: rgba(232,123,107,0.12); color: var(--rose); text-transform: uppercase; }
+
+/* ---- Wide modal for plan viewer ---- */
+.modal-wide { width: min(760px, 94vw); max-height: 88vh; overflow-y: auto; }
+
 /* Auth modal */
 .btn-google {
   display: flex; align-items: center; justify-content: center; gap: 12px;

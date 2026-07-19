@@ -229,7 +229,7 @@ function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   if (tab === 'trades') drawEquityCurve();
 }
-function renderAll() { renderDashboard(); renderTrades(); renderWorkouts(); renderCommunity(); renderProfile(); }
+function renderAll() { renderDashboard(); renderTrades(); renderWorkouts(); renderMyPlan(); renderCommunity(); renderProfile(); }
 
 /* ================= PLANS / CHECKOUT (demo) ================= */
 let pendingPlan = null;
@@ -565,6 +565,208 @@ function renderProfile() {
       ${u.bio ? `<div class="bio">${esc(u.bio)}</div>` : '<div class="bio">Add a bio so the community can get to know you.</div>'}
     </div>`;
 }
+
+/* ================= FITNESS & MEAL PLAN ENGINE ================= */
+
+/* Food options per diet preference (one representative day is shown) */
+const FOODS = {
+  veg: {
+    Breakfast: 'Oats with milk, banana & a handful of almonds',
+    Lunch: 'Dal, 2 rotis, mixed-veg sabzi, curd & salad',
+    Dinner: 'Palak paneer with 2 rotis and a bowl of salad',
+    Snack: 'Greek yogurt with berries + roasted chana'
+  },
+  nonveg: {
+    Breakfast: '3 eggs, 2 slices whole-grain toast & a fruit',
+    Lunch: 'Grilled chicken, brown rice, sautéed veg & salad',
+    Dinner: 'Baked fish (or chicken) with quinoa and greens',
+    Snack: 'Boiled eggs + a fruit, or a protein shake'
+  },
+  vegan: {
+    Breakfast: 'Tofu scramble with veg & 2 slices whole-grain toast',
+    Lunch: 'Chickpea & quinoa bowl with tahini and salad',
+    Dinner: 'Lentil curry with brown rice and steamed greens',
+    Snack: 'Soy yogurt with nuts + a fruit, or a pea-protein shake'
+  }
+};
+
+/* Training splits by days/week — arrays of {focus, exercises[]} */
+const DAY = {
+  push: { focus: 'Push (chest, shoulders, triceps)', exercises: ['Bench press 3×8', 'Overhead press 3×10', 'Incline dumbbell press 3×10', 'Lateral raises 3×15', 'Triceps pushdown 3×12'] },
+  pull: { focus: 'Pull (back, biceps)', exercises: ['Deadlift 3×5', 'Lat pulldown 3×10', 'Seated row 3×10', 'Face pulls 3×15', 'Biceps curls 3×12'] },
+  legs: { focus: 'Legs & core', exercises: ['Squat 4×6', 'Romanian deadlift 3×10', 'Leg press 3×12', 'Walking lunges 3×12', 'Plank 3×45s'] },
+  upper: { focus: 'Upper body', exercises: ['Bench press 4×8', 'Bent-over row 4×8', 'Overhead press 3×10', 'Lat pulldown 3×10', 'Curls & pushdowns 3×12'] },
+  lower: { focus: 'Lower body & core', exercises: ['Squat 4×6', 'Romanian deadlift 3×8', 'Leg press 3×12', 'Calf raises 3×15', 'Hanging leg raises 3×12'] },
+  fullA: { focus: 'Full body A', exercises: ['Squat 3×8', 'Bench press 3×8', 'Bent-over row 3×8', 'Plank 3×45s'] },
+  fullB: { focus: 'Full body B', exercises: ['Deadlift 3×5', 'Overhead press 3×10', 'Lat pulldown 3×10', 'Lunges 3×12'] }
+};
+const SPLITS = {
+  2: ['fullA', 'fullB'],
+  3: ['push', 'pull', 'legs'],
+  4: ['upper', 'lower', 'upper', 'lower'],
+  5: ['push', 'pull', 'legs', 'upper', 'lower'],
+  6: ['push', 'pull', 'legs', 'push', 'pull', 'legs']
+};
+
+/* Core calculation — Mifflin-St Jeor BMR → TDEE → goal-adjusted calories + macros */
+function computePlan(inp) {
+  const w = +inp.weight, h = +inp.height, a = +inp.age, act = +inp.activity;
+  const bmr = inp.sex === 'male' ? 10 * w + 6.25 * h - 5 * a + 5 : 10 * w + 6.25 * h - 5 * a - 161;
+  const tdee = bmr * act;
+  let cal = inp.goal === 'lose' ? tdee - 500 : inp.goal === 'gain' ? tdee + 350 : tdee;
+  cal = Math.max(cal, inp.sex === 'male' ? 1500 : 1200);
+  cal = Math.round(cal / 10) * 10;
+  const protein = Math.round(w * (inp.goal === 'maintain' ? 1.6 : 2.0));
+  const fat = Math.round(cal * 0.25 / 9);
+  const carbs = Math.max(0, Math.round((cal - protein * 4 - fat * 9) / 4));
+
+  // meals with per-meal calorie targets
+  const split = { Breakfast: 0.25, Lunch: 0.30, Dinner: 0.30, Snack: 0.15 };
+  const meals = Object.keys(split).map(m => ({
+    meal: m, kcal: Math.round(cal * split[m] / 10) * 10, food: FOODS[inp.diet][m]
+  }));
+
+  // workout week
+  const days = SPLITS[inp.days] || SPLITS[4];
+  const cardio = inp.goal === 'lose' ? '20–30 min brisk cardio' : inp.goal === 'gain' ? '10 min light cardio (optional)' : '15–20 min moderate cardio';
+  const workout = days.map((k, i) => ({ label: `Day ${i + 1}`, focus: DAY[k].focus, exercises: DAY[k].exercises, cardio }));
+
+  return { cal, protein, carbs, fat, meals, workout, goal: inp.goal, diet: inp.diet, days: inp.days };
+}
+
+/* Build the HTML for a plan (used in the app and in sample pop-ups) */
+function planHTML(plan, heading) {
+  const goalLabel = { lose: 'Fat loss', maintain: 'Maintenance / recomp', gain: 'Muscle gain' }[plan.goal];
+  const dietLabel = { veg: 'Vegetarian', nonveg: 'Non-vegetarian', vegan: 'Vegan' }[plan.diet];
+  return `
+    ${heading ? `<h2 class="panel-title" style="margin-bottom:6px;">${heading}</h2>
+      <p style="color:var(--muted); margin-bottom:20px;">${goalLabel} · ${dietLabel} · ${plan.days} training days/week</p>` : ''}
+    <div class="stats-row">
+      <div class="stat-box"><div class="v">${plan.cal}</div><div class="k">DAILY CALORIES</div></div>
+      <div class="stat-box"><div class="v">${plan.protein}g</div><div class="k">PROTEIN</div></div>
+      <div class="stat-box"><div class="v">${plan.carbs}g</div><div class="k">CARBS</div></div>
+      <div class="stat-box"><div class="v">${plan.fat}g</div><div class="k">FAT</div></div>
+    </div>
+    <div class="panel glass">
+      <h3>🍽️ Sample Day of Meals</h3>
+      <div class="meal-list">
+        ${plan.meals.map(m => `<div class="meal-row">
+          <div class="meal-head"><span class="meal-name">${m.meal}</span><span class="meal-kcal">${m.kcal} kcal</span></div>
+          <div class="meal-food">${m.food}</div></div>`).join('')}
+      </div>
+      <p class="plan-note">Swap any item for a similar one you enjoy — hit the calorie and protein targets and you're on track.</p>
+    </div>
+    <div class="panel glass">
+      <h3>🏋️ Weekly Workout Split</h3>
+      <div class="workout-grid">
+        ${plan.workout.map(d => `<div class="workout-day">
+          <div class="wd-head">${d.label} — <span>${d.focus}</span></div>
+          <ul>${d.exercises.map(x => `<li>${x}</li>`).join('')}</ul>
+          <div class="wd-cardio">Finish: ${d.cardio}</div></div>`).join('')}
+      </div>
+      <p class="plan-note">Rest on non-training days. Add 7–8k daily steps for extra results.</p>
+    </div>`;
+}
+
+/* App: generate from the form */
+const planForm = document.getElementById('planForm');
+if (planForm) planForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  const inp = readPlanForm();
+  const plan = computePlan(inp);
+  document.getElementById('planResult').innerHTML = planHTML(plan, null);
+  await saveIntake(inp);
+  toast('Your plan is ready 🔥');
+});
+
+function readPlanForm() {
+  return {
+    sex: document.getElementById('fSex').value,
+    age: document.getElementById('fAge').value,
+    height: document.getElementById('fHeight').value,
+    weight: document.getElementById('fWeight').value,
+    activity: document.getElementById('fActivity').value,
+    goal: document.getElementById('fGoal').value,
+    diet: document.getElementById('fDiet').value,
+    days: +document.getElementById('fDays').value
+  };
+}
+
+function fillPlanForm(inp) {
+  document.getElementById('fSex').value = inp.sex;
+  document.getElementById('fAge').value = inp.age;
+  document.getElementById('fHeight').value = inp.height;
+  document.getElementById('fWeight').value = inp.weight;
+  document.getElementById('fActivity').value = inp.activity;
+  document.getElementById('fGoal').value = inp.goal;
+  document.getElementById('fDiet').value = inp.diet;
+  document.getElementById('fDays').value = inp.days;
+}
+
+/* Persist intake — DB if the columns exist, always localStorage as a safety net */
+async function saveIntake(inp) {
+  if (session) localStorage.setItem('sj_plan_' + session.user.id, JSON.stringify(inp));
+  if (!session) return;
+  const { error } = await sb.from('profiles').update({
+    sex: inp.sex, age: +inp.age, height_cm: +inp.height, weight_kg: +inp.weight,
+    activity: String(inp.activity), goal: inp.goal, diet: inp.diet, days_per_week: +inp.days
+  }).eq('id', session.user.id);
+  // If the extra columns aren't added yet, that's fine — localStorage still holds it.
+  if (error) console.info('Fitness intake kept locally (run the DB migration to sync across devices).');
+}
+
+function loadIntake() {
+  if (profile && profile.age) {
+    return { sex: profile.sex || 'male', age: profile.age, height: profile.height_cm,
+      weight: profile.weight_kg, activity: profile.activity || '1.55', goal: profile.goal || 'maintain',
+      diet: profile.diet || 'veg', days: profile.days_per_week || 4 };
+  }
+  if (session) {
+    const ls = localStorage.getItem('sj_plan_' + session.user.id);
+    if (ls) return JSON.parse(ls);
+  }
+  return null;
+}
+
+function renderMyPlan() {
+  const inp = loadIntake();
+  if (!inp) return;
+  fillPlanForm(inp);
+  document.getElementById('planResult').innerHTML = planHTML(computePlan(inp), null);
+}
+
+/* Public: sample plans on the landing page (built from preset profiles) */
+const SAMPLE_PRESETS = [
+  { title: 'Lean & Cut', tag: 'Fat loss', emoji: '🔥', inp: { sex: 'male', age: 32, height: 178, weight: 88, activity: '1.55', goal: 'lose', diet: 'nonveg', days: 4 } },
+  { title: 'Build Muscle', tag: 'Muscle gain', emoji: '💪', inp: { sex: 'male', age: 25, height: 175, weight: 68, activity: '1.55', goal: 'gain', diet: 'veg', days: 5 } },
+  { title: 'Fit & Healthy', tag: 'Maintain', emoji: '🧘', inp: { sex: 'female', age: 34, height: 165, weight: 62, activity: '1.375', goal: 'maintain', diet: 'veg', days: 3 } }
+];
+function renderSamples() {
+  const el = document.getElementById('sampleCards');
+  if (!el) return;
+  el.innerHTML = SAMPLE_PRESETS.map((s, i) => {
+    const p = computePlan(s.inp);
+    return `<div class="card reveal">
+      <div class="sample-emoji">${s.emoji}</div>
+      <h3>${s.title}</h3>
+      <div class="sample-tag">${s.tag}</div>
+      <div class="price">${p.cal}<span> kcal/day</span></div>
+      <ul>
+        <li>${p.protein}g protein · ${p.carbs}g carbs · ${p.fat}g fat</li>
+        <li>${s.inp.days}-day training split</li>
+        <li>Full sample day of meals</li>
+      </ul>
+      <button class="btn btn-outline alt" onclick="openSample(${i})">View full plan</button>
+    </div>`;
+  }).join('');
+  document.querySelectorAll('#sampleCards .reveal').forEach(elm => revealObserver.observe(elm));
+}
+function openSample(i) {
+  const s = SAMPLE_PRESETS[i];
+  document.getElementById('planModalBody').innerHTML = planHTML(computePlan(s.inp), `${s.emoji} ${s.title} — ${s.tag}`);
+  openModal('planModal');
+}
+renderSamples();
 
 /* ================= BOOT ================= */
 ['tDate', 'wDate'].forEach(id => { const el = document.getElementById(id); if (el) el.value = today; });
