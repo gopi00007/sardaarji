@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SARDAARJI — Fitness & Trading Coach</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- AMBIENT BACKGROUND -->
+<canvas id="particles"></canvas>
+<div class="bg-glow bg-glow-1"></div>
+<div class="bg-glow bg-glow-2"></div>
+
+<!-- ============ LANDING PAGE ============ -->
+<div id="landing">
+
+  <nav class="nav">
+    <div class="nav-logo">SARDAAR<span>JI</span></div>
+    <div class="nav-links">
+      <a href="#trading">Trading</a>
+      <a href="#fitness">Fitness</a>
+      <a href="#community">Community</a>
+    </div>
+    <button class="btn btn-primary" onclick="openOnboarding()">Launch App</button>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-badge">Coaching for the disciplined life</div>
+    <h1 class="hero-title">
+      <span class="line">
+        <span class="word">Master</span> <span class="word">your</span> <span class="word">money.</span>
+      </span>
+      <span class="line accent">
+        <span class="word">Master</span> <span class="word">your</span> <span class="word">body.</span>
+      </span>
+    </h1>
+    <p class="hero-sub">One platform for traders and athletes. Log your trades, track your training,
+    get intelligent recommendations — and grow alongside a community that holds you to a higher standard.</p>
+    <div class="hero-cta">
+      <button class="btn btn-primary btn-lg" onclick="scrollToSection('trading')">I'm a Trader</button>
+      <button class="btn btn-outline btn-lg" onclick="scrollToSection('fitness')">I'm Into Fitness</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num" data-count="12500">0</div><div class="stat-label">Members</div></div>
+      <div class="stat"><div class="stat-num" data-count="184000">0</div><div class="stat-label">Trades Logged</div></div>
+      <div class="stat"><div class="stat-num" data-count="96000">0</div><div class="stat-label">Workouts Tracked</div></div>
+      <div class="stat"><div class="stat-num" data-count="98">0</div><div class="stat-label">% Satisfaction</div></div>
+    </div>
+    <div class="scroll-cue"><span></span></div>
+  </header>
+
+  <!-- TICKER -->
+  <div class="ticker-wrap">
+    <div class="ticker" id="ticker"></div>
+  </div>
+
+  <!-- BIG STATEMENT -->
+  <section class="statement">
+    <p class="statement-text reveal">Discipline is <em>one muscle</em>.<br>We train it twice.</p>
+    <p class="statement-sub reveal">The trader who journals every position and the athlete who logs every session
+    are practicing the same skill — showing up, measuring honestly, improving deliberately.</p>
+  </section>
+
+  <!-- TRADING -->
+  <section class="section" id="trading">
+    <div class="split">
+      <div class="split-copy reveal">
+        <div class="section-tag">TRADING</div>
+        <h2 class="section-title">Trade with a system,<br>not with emotion.</h2>
+        <p class="section-sub">Every trade you log becomes data. Win rate, risk-reward, equity curve —
+        your journal shows you the truth about your trading, and your coach shows you what to fix.</p>
+        <ul class="split-list">
+          <li>Trade journal with automatic P/L analytics</li>
+          <li>Equity curve & risk-reward tracking</li>
+          <li>Live sessions and direct coach Q&A</li>
+        </ul>
+      </div>
+      <div class="split-media reveal" data-parallax="0.06">
+        <div class="media-frame media-trading"></div>
+        <div class="float-card float-1"><span class="fc-label">Win rate</span><span class="fc-value">62%</span></div>
+        <div class="float-card float-2"><span class="fc-label">This month</span><span class="fc-value up">+8.4%</span></div>
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="card reveal">
+        <h3>Starter Trader</h3>
+        <div class="price">$29<span>/mo</span></div>
+        <ul>
+          <li>Trade journal & P/L tracking</li>
+          <li>Win-rate analytics</li>
+          <li>Weekly market outlook</li>
+          <li>Community access</li>
+        </ul>
+        <button class="btn btn-outline" onclick="buyPlan('Starter Trader', 29, 'trading')">Choose Plan</button>
+      </div>
+      <div class="card card-featured reveal">
+        <div class="card-badge">MOST POPULAR</div>
+        <h3>Pro Trader</h3>
+        <div class="price">$79<span>/mo</span></div>
+        <ul>
+          <li>Everything in Starter</li>
+          <li>Equity curve & risk analytics</li>
+          <li>Live trading room sessions</li>
+          <li>Direct Q&A with Sardaarji</li>
+        </ul>
+        <button class="btn btn-primary" onclick="buyPlan('Pro Trader', 79, 'trading')">Choose Plan</button>
+      </div>
+      <div class="card reveal">
+        <h3>Elite Trader</h3>
+        <div class="price">$199<span>/mo</span></div>
+        <ul>
+          <li>Everything in Pro</li>
+          <li>1-on-1 monthly coaching call</li>
+          <li>Custom trading system review</li>
+          <li>Priority support</li>
+        </ul>
+        <button class="btn btn-outline" onclick="buyPlan('Elite Trader', 199, 'trading')">Choose Plan</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FITNESS -->
+  <section class="section" id="fitness">
+    <div class="split split-reverse">
+      <div class="split-copy reveal">
+        <div class="section-tag alt">FITNESS</div>
+        <h2 class="section-title">Train with intention,<br>recover with intelligence.</h2>
+        <p class="section-sub">Log every session and let the platform watch your patterns — it tells you when
+        to push, when to rest, and what your week is missing. Progress you can see, streaks you can feel.</p>
+        <ul class="split-list alt">
+          <li>Workout log with streak tracking</li>
+          <li>Smart weekly recommendations</li>
+          <li>Personalized programming on higher tiers</li>
+        </ul>
+      </div>
+      <div class="split-media reveal" data-parallax="0.06">
+        <div class="media-frame media-fitness"></div>
+        <div class="float-card float-1"><span class="fc-label">Streak</span><span class="fc-value">14 days</span></div>
+        <div class="float-card float-2"><span class="fc-label">This week</span><span class="fc-value up">5 sessions</span></div>
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="card reveal">
+        <h3>Kickstart</h3>
+        <div class="price">$19<span>/mo</span></div>
+        <ul>
+          <li>Workout log & streak tracking</li>
+          <li>Smart recommendations</li>
+          <li>Beginner program library</li>
+          <li>Community access</li>
+        </ul>
+        <button class="btn btn-outline alt" onclick="buyPlan('Kickstart', 19, 'fitness')">Choose Plan</button>
+      </div>
+      <div class="card card-featured alt reveal">
+        <div class="card-badge alt">MOST POPULAR</div>
+        <h3>Transform</h3>
+        <div class="price">$49<span>/mo</span></div>
+        <ul>
+          <li>Everything in Kickstart</li>
+          <li>Custom meal guidance</li>
+          <li>Progress analytics</li>
+          <li>Direct Q&A with Sardaarji</li>
+        </ul>
+        <button class="btn btn-primary alt" onclick="buyPlan('Transform', 49, 'fitness')">Choose Plan</button>
+      </div>
+      <div class="card reveal">
+        <h3>Peak Performance</h3>
+        <div class="price">$99<span>/mo</span></div>
+        <ul>
+          <li>Everything in Transform</li>
+          <li>1-on-1 monthly video coaching</li>
+          <li>Fully personalized programming</li>
+          <li>Priority support</li>
+        </ul>
+        <button class="btn btn-outline alt" onclick="buyPlan('Peak Performance', 99, 'fitness')">Choose Plan</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUOTES MARQUEE -->
+  <div class="quotes-wrap">
+    <div class="quotes" id="quotes">
+      <div class="quote"><p>"Journaling every trade cut my losses in half. The truth was in the data."</p><span>— Aman, Pro Trader</span></div>
+      <div class="quote"><p>"14-day streak and counting. The recommendations actually adapt to my week."</p><span>— Priya, Transform</span></div>
+      <div class="quote"><p>"Same discipline in the gym and the market. This platform gets it."</p><span>— Jasdeep, Elite + Peak</span></div>
+      <div class="quote"><p>"Asked a question at 7am, had the coach's answer by 8. Unreal."</p><span>— Rohit, Pro Trader</span></div>
+      <div class="quote"><p>"I stopped guessing. Now I train, log, adjust. Repeat."</p><span>— Simran, Kickstart</span></div>
+    </div>
+  </div>
+
+  <!-- COMMUNITY -->
+  <section class="section" id="community">
+    <div class="section-center">
+      <div class="section-tag">COMMUNITY</div>
+      <h2 class="section-title">Nobody grows alone.</h2>
+      <p class="section-sub center">Build your profile, follow other members, ask questions and get answers —
+      traders and athletes, side by side.</p>
+    </div>
+    <div class="features">
+      <div class="feature reveal"><h4>Member Profiles</h4><p>Showcase your goals, wins and journey. Traders and fitness members side by side.</p></div>
+      <div class="feature reveal"><h4>Q&A Board</h4><p>Ask anything — get direct answers from the community and from Sardaarji himself.</p></div>
+      <div class="feature reveal"><h4>Smart Analytics</h4><p>Your trades and workouts become insights: win rates, streaks, and personalized tips.</p></div>
+    </div>
+  </section>
+
+  <!-- CTA BANNER -->
+  <section class="cta-banner reveal">
+    <h2>Your future self is watching.</h2>
+    <p>Start logging. Start growing. Join thousands who train both muscles.</p>
+    <button class="btn btn-dark btn-lg" onclick="openOnboarding()">Start Your Journey</button>
+  </section>
+
+  <footer class="footer">
+    <div class="nav-logo">SARDAAR<span>JI</span></div>
+    <p>Fitness & Trading Coach — Master your money. Master your body.</p>
+    <p class="footer-fine">© 2026 Sardaarji Coaching. Demo prototype — payments are simulated.</p>
+  </footer>
+</div>
+
+<!-- ============ APP (after login) ============ -->
+<div id="app" class="hidden">
+  <nav class="nav app-nav">
+    <div class="nav-logo">SARDAAR<span>JI</span></div>
+    <div class="app-tabs">
+      <button class="tab-btn active" data-tab="dashboard" onclick="switchTab('dashboard')">Dashboard</button>
+      <button class="tab-btn" data-tab="trades" onclick="switchTab('trades')">Trade Journal</button>
+      <button class="tab-btn" data-tab="fitnesslog" onclick="switchTab('fitnesslog')">Fitness Log</button>
+      <button class="tab-btn" data-tab="communityTab" onclick="switchTab('communityTab')">Community</button>
+      <button class="tab-btn" data-tab="profile" onclick="switchTab('profile')">Profile</button>
+    </div>
+    <button class="btn btn-outline btn-sm" onclick="logout()">Exit</button>
+  </nav>
+
+  <main class="app-main">
+
+    <!-- DASHBOARD -->
+    <div class="tab-panel" id="tab-dashboard">
+      <h2 class="panel-title" id="welcomeMsg">Welcome</h2>
+      <div class="dash-grid" id="dashCards"></div>
+      <div class="panel glass">
+        <h3>Your Active Plans</h3>
+        <div id="activePlans" class="plan-chips"></div>
+      </div>
+      <div class="panel glass">
+        <h3>Today's Coach Insights</h3>
+        <div id="dashInsights"></div>
+      </div>
+    </div>
+
+    <!-- TRADE JOURNAL -->
+    <div class="tab-panel hidden" id="tab-trades">
+      <h2 class="panel-title">Trade Journal</h2>
+      <div class="stats-row" id="tradeStats"></div>
+      <div class="two-col">
+        <div class="panel glass">
+          <h3>Log a Trade</h3>
+          <form id="tradeForm" class="form">
+            <div class="form-row">
+              <input type="text" id="tSymbol" placeholder="Symbol (e.g. AAPL, NIFTY)" required>
+              <select id="tSide"><option value="Long">Long (Buy)</option><option value="Short">Short (Sell)</option></select>
+            </div>
+            <div class="form-row">
+              <input type="number" step="any" id="tEntry" placeholder="Entry price" required>
+              <input type="number" step="any" id="tExit" placeholder="Exit price" required>
+              <input type="number" step="any" id="tQty" placeholder="Quantity" required>
+            </div>
+            <input type="date" id="tDate" required>
+            <textarea id="tNotes" placeholder="Notes — why did you take this trade?" rows="2"></textarea>
+            <button class="btn btn-primary" type="submit">＋ Add Trade</button>
+          </form>
+        </div>
+        <div class="panel glass">
+          <h3>Equity Curve</h3>
+          <canvas id="equityChart" width="520" height="240"></canvas>
+        </div>
+      </div>
+      <div class="panel glass">
+        <h3>Trade History</h3>
+        <div class="table-wrap">
+          <table class="data-table" id="tradeTable">
+            <thead><tr><th>Date</th><th>Symbol</th><th>Side</th><th>Entry</th><th>Exit</th><th>Qty</th><th>P/L</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- FITNESS LOG -->
+    <div class="tab-panel hidden" id="tab-fitnesslog">
+      <h2 class="panel-title">Fitness Log</h2>
+      <div class="stats-row" id="fitStats"></div>
+      <div class="two-col">
+        <div class="panel glass">
+          <h3>Log a Workout</h3>
+          <form id="workoutForm" class="form">
+            <div class="form-row">
+              <input type="text" id="wName" placeholder="Workout (e.g. Bench Press, 5K Run)" required>
+              <select id="wType">
+                <option>Strength</option><option>Cardio</option><option>Flexibility / Yoga</option><option>Sports</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <input type="number" id="wDuration" placeholder="Minutes" required>
+              <input type="number" id="wIntensity" placeholder="Intensity 1-10" min="1" max="10" required>
+            </div>
+            <input type="date" id="wDate" required>
+            <textarea id="wNotes" placeholder="How did it feel?" rows="2"></textarea>
+            <button class="btn btn-primary alt" type="submit">＋ Add Workout</button>
+          </form>
+        </div>
+        <div class="panel glass">
+          <h3>Smart Recommendations</h3>
+          <div id="fitRecs"></div>
+        </div>
+      </div>
+      <div class="panel glass">
+        <h3>Workout History</h3>
+        <div class="table-wrap">
+          <table class="data-table" id="workoutTable">
+            <thead><tr><th>Date</th><th>Workout</th><th>Type</th><th>Minutes</th><th>Intensity</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMMUNITY -->
+    <div class="tab-panel hidden" id="tab-communityTab">
+      <h2 class="panel-title">Community</h2>
+      <div class="two-col">
+        <div>
+          <div class="panel glass">
+            <h3>Ask a Question</h3>
+            <form id="questionForm" class="form">
+              <input type="text" id="qTitle" placeholder="Your question…" required>
+              <select id="qCategory"><option>Trading</option><option>Fitness</option><option>General</option></select>
+              <button class="btn btn-primary" type="submit">Post Question</button>
+            </form>
+          </div>
+          <div class="panel glass">
+            <h3>Q&A Board</h3>
+            <div id="qaBoard"></div>
+          </div>
+        </div>
+        <div class="panel glass">
+          <h3>Members</h3>
+          <div id="memberList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="tab-panel hidden" id="tab-profile">
+      <h2 class="panel-title">My Profile</h2>
+      <div class="two-col">
+        <div class="panel glass">
+          <h3>Edit Profile</h3>
+          <form id="profileForm" class="form">
+            <input type="text" id="pName" placeholder="Display name" required>
+            <select id="pRole">
+              <option value="trader">Trader</option>
+              <option value="fitness">Fitness</option>
+              <option value="both">Both</option>
+            </select>
+            <textarea id="pBio" placeholder="Your bio — tell the community about yourself" rows="3"></textarea>
+            <input type="text" id="pGoal" placeholder="Current goal (e.g. 'Consistent 5% monthly', 'Run a half marathon')">
+            <button class="btn btn-primary" type="submit">Save Profile</button>
+          </form>
+        </div>
+        <div class="panel glass">
+          <h3>Preview</h3>
+          <div id="profilePreview"></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay hidden" id="authModal">
+  <div class="modal glass">
+    <h2>Join SARDAARJI</h2>
+    <p>Sign in to save your profile, trades and workouts to the cloud.</p>
+    <button class="btn btn-google" onclick="signInGoogle()">
+      <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.8.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.02-3.7H.96v2.34A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.98 10.72a5.4 5.4 0 0 1 0-3.44V4.94H.96a9 9 0 0 0 0 8.12l3.02-2.34z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.46 3.44 1.35l2.58-2.58C13.46.9 11.43 0 9 0A9 9 0 0 0 .96 4.94l3.02 2.34C4.68 5.16 6.66 3.58 9 3.58z"/></svg>
+      <span>Continue with Google</span>
+    </button>
+    <div class="auth-divider"><span>or</span></div>
+    <form id="emailForm" class="form">
+      <input type="email" id="authEmail" placeholder="you@email.com" required>
+      <button class="btn btn-primary" type="submit">Email me a login link</button>
+    </form>
+    <p id="authMsg" class="auth-msg"></p>
+    <button class="modal-close" onclick="closeModal('authModal')">✕</button>
+  </div>
+</div>
+
+<!-- CHECKOUT MODAL (demo) -->
+<div class="modal-overlay hidden" id="checkoutModal">
+  <div class="modal glass">
+    <h2>Checkout</h2>
+    <div id="checkoutBody"></div>
+    <button class="modal-close" onclick="closeModal('checkoutModal')">✕</button>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
