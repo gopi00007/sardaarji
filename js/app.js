@@ -865,15 +865,19 @@ if (leadForm) leadForm.addEventListener('submit', async e => {
   const msg = document.getElementById('leadMsg');
   if (!email) return;
   msg.style.color = 'var(--gold)';
-  msg.textContent = 'Sending…';
+  msg.textContent = 'Preparing your download…';
+
+  // Save the lead for your mailing list (never blocks the download).
   const { error } = await sb.from('leads').insert({ email, source: 'starter-kit' });
-  if (error) {
-    // Table may not exist yet — don't lose the lead; still thank them.
-    console.info('Lead capture: create the leads table (supabase-migration-leads.sql) to store these.');
-    msg.textContent = '✅ Thanks! Your free kit is on its way.';
-  } else {
-    msg.textContent = '✅ You\'re in! Check your inbox for the free kit.';
-  }
+  if (error) console.info('Lead not stored — run supabase-migration-leads.sql to create the leads table.', error.message);
+
+  // Deliver the guide immediately. We promise an instant download, so we give one.
+  const a = document.createElement('a');
+  a.href = 'downloads/sardaarji-free-starter-kit.pdf';
+  a.download = 'sardaarji-free-starter-kit.pdf';
+  document.body.appendChild(a); a.click(); a.remove();
+
+  msg.textContent = '✅ Downloading now — check your downloads folder.';
   leadForm.reset();
 });
 
