@@ -737,3 +737,40 @@ input::placeholder, textarea::placeholder { color: var(--muted); }
 }
 .dl-next { margin-top: 30px; color: var(--muted); }
 .dl-next a { color: var(--gold); text-decoration: none; }
+
+/* ============ LIVE TICKER / HONEST HERO / HOW-IT-WORKS ============ */
+
+/* Live badge + scrolling viewport */
+.ticker-wrap { display: flex; align-items: center; gap: 0; }
+.ticker-live {
+  display: flex; align-items: center; gap: 7px; flex-shrink: 0;
+  font-size: 0.72rem; font-weight: 800; letter-spacing: 1.5px; color: var(--gold);
+  padding: 0 18px; border-right: 1px solid var(--glass-border); align-self: stretch;
+}
+.ticker-live i {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--green);
+  animation: live-pulse 1.8s ease-in-out infinite;
+}
+@keyframes live-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.25; } }
+.ticker-viewport { overflow: hidden; flex: 1; white-space: nowrap; }
+
+/* Hero value props (replaced the invented stat counters) */
+.stat-ico { font-size: 1.6rem; margin-bottom: 8px; }
+.hero-stats .stat-label { font-size: 0.86rem; line-height: 1.45; color: var(--muted); }
+
+/* How it works */
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; max-width: 1000px; margin: 0 auto; }
+@media (max-width: 780px) { .steps { grid-template-columns: 1fr; } }
+.step {
+  border: 1px solid var(--glass-border); border-radius: 18px; padding: 30px 26px;
+  background: var(--glass); transition: transform .25s, border-color .3s;
+}
+.step:hover { transform: translateY(-6px); border-color: rgba(232,180,76,0.45); }
+.step-n {
+  display: flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: 50%; margin-bottom: 16px;
+  font-family: 'Sora', sans-serif; font-weight: 800; font-size: 1.05rem; color: #1a1206;
+  background: linear-gradient(120deg, var(--gold), var(--gold-deep));
+}
+.step h4 { font-family: 'Sora', sans-serif; font-size: 1.08rem; margin-bottom: 9px; }
+.step p { color: var(--muted); font-size: 0.92rem; line-height: 1.6; }

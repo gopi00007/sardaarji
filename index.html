@@ -67,17 +67,18 @@
       <button class="btn btn-outline btn-lg" onclick="scrollToSection('fitness')">I'm Into Fitness</button>
     </div>
     <div class="hero-stats">
-      <div class="stat"><div class="stat-num" data-count="12500">0</div><div class="stat-label">Members</div></div>
-      <div class="stat"><div class="stat-num" data-count="184000">0</div><div class="stat-label">Trades Logged</div></div>
-      <div class="stat"><div class="stat-num" data-count="96000">0</div><div class="stat-label">Workouts Tracked</div></div>
-      <div class="stat"><div class="stat-num" data-count="98">0</div><div class="stat-label">% Satisfaction</div></div>
+      <div class="stat"><div class="stat-ico">📓</div><div class="stat-label">Log a trade<br>in 30 seconds</div></div>
+      <div class="stat"><div class="stat-ico">🍽️</div><div class="stat-label">Meal &amp; workout plans<br>built around you</div></div>
+      <div class="stat"><div class="stat-ico">🧰</div><div class="stat-label">Free tools —<br>no signup needed</div></div>
+      <div class="stat"><div class="stat-ico">✓</div><div class="stat-label">7-day free trial,<br>cancel anytime</div></div>
     </div>
     <div class="scroll-cue"><span></span></div>
   </header>
 
-  <!-- TICKER -->
-  <div class="ticker-wrap">
-    <div class="ticker" id="ticker"></div>
+  <!-- LIVE MARKET TICKER (real data — hidden automatically if the feed is unavailable) -->
+  <div class="ticker-wrap" id="tickerWrap" style="display:none;">
+    <span class="ticker-live"><i></i>LIVE</span>
+    <div class="ticker-viewport"><div class="ticker" id="ticker"></div></div>
   </div>
 
   <!-- BIG STATEMENT -->
@@ -103,8 +104,8 @@
       </div>
       <div class="split-media reveal" data-parallax="0.06">
         <div class="media-frame media-trading"></div>
-        <div class="float-card float-1"><span class="fc-label">Win rate</span><span class="fc-value">62%</span></div>
-        <div class="float-card float-2"><span class="fc-label">This month</span><span class="fc-value up">+8.4%</span></div>
+        <div class="float-card float-1"><span class="fc-label">Journal</span><span class="fc-value">Auto P/L</span></div>
+        <div class="float-card float-2"><span class="fc-label">Analytics</span><span class="fc-value">Equity curve</span></div>
       </div>
     </div>
 
@@ -197,8 +198,8 @@
       </div>
       <div class="split-media reveal" data-parallax="0.06">
         <div class="media-frame media-fitness"></div>
-        <div class="float-card float-1"><span class="fc-label">Streak</span><span class="fc-value">14 days</span></div>
-        <div class="float-card float-2"><span class="fc-label">This week</span><span class="fc-value up">5 sessions</span></div>
+        <div class="float-card float-1"><span class="fc-label">Training</span><span class="fc-value">Streak tracking</span></div>
+        <div class="float-card float-2"><span class="fc-label">Coaching</span><span class="fc-value">Smart tips</span></div>
       </div>
     </div>
 
@@ -287,16 +288,32 @@
     </div>
   </section>
 
-  <!-- QUOTES MARQUEE -->
-  <div class="quotes-wrap">
-    <div class="quotes" id="quotes">
-      <div class="quote"><p>"Journaling every trade cut my losses in half. The truth was in the data."</p><span>— Aman, Pro Trader</span></div>
-      <div class="quote"><p>"14-day streak and counting. The recommendations actually adapt to my week."</p><span>— Priya, Transform</span></div>
-      <div class="quote"><p>"Same discipline in the gym and the market. This platform gets it."</p><span>— Jasdeep, Elite + Peak</span></div>
-      <div class="quote"><p>"Asked a question at 7am, had the coach's answer by 8. Unreal."</p><span>— Rohit, Pro Trader</span></div>
-      <div class="quote"><p>"I stopped guessing. Now I train, log, adjust. Repeat."</p><span>— Simran, Kickstart</span></div>
+  <!-- HOW IT WORKS -->
+  <!-- NOTE: real member testimonials go here once you have them (with permission). -->
+  <section class="section" id="how">
+    <div class="section-center">
+      <div class="section-tag">HOW IT WORKS</div>
+      <h2 class="section-title">Three steps. That's it.</h2>
+      <p class="section-sub center">No complicated onboarding, no 40-page course to finish before you start.</p>
     </div>
-  </div>
+    <div class="steps">
+      <div class="step reveal">
+        <span class="step-n">1</span>
+        <h4>Pick your path</h4>
+        <p>Trading, fitness, or both. Start with the free tools or the $20 pack — no commitment, no card.</p>
+      </div>
+      <div class="step reveal">
+        <span class="step-n">2</span>
+        <h4>Log what you actually do</h4>
+        <p>Every trade and every workout takes seconds to record. Honest data beats good intentions.</p>
+      </div>
+      <div class="step reveal">
+        <span class="step-n">3</span>
+        <h4>Let the data coach you</h4>
+        <p>Win rates, equity curves, streaks and personalized plans show you exactly what to fix next.</p>
+      </div>
+    </div>
+  </section>
 
   <!-- COMMUNITY -->
   <section class="section" id="community">

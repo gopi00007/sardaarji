@@ -70,18 +70,41 @@ function drawParticles() {
 }
 drawParticles();
 
-/* ---- Ticker ---- */
-const tickerData = [
-  ['NIFTY 50', '+0.84%', 'up'], ['BTC/USD', '+2.31%', 'up'], ['AAPL', '-0.42%', 'down'],
-  ['GOLD', '+0.19%', 'up'], ['TSLA', '+1.77%', 'up'], ['BANKNIFTY', '-0.28%', 'down'],
-  ['ETH/USD', '+3.05%', 'up'], ['S&P 500', '+0.51%', 'up'], ['USD/INR', '-0.09%', 'down'],
-  ['96,000 workouts logged', '', 'up'], ['184,000 trades journaled', '', 'up']
-];
-const tickerEl = document.getElementById('ticker');
-if (tickerEl) {
-  const half = tickerData.map(([s, c, dir]) => `<span>${s} <span class="${dir}">${c}</span></span>`).join('');
-  tickerEl.innerHTML = half + half;
+/* ---- LIVE market ticker ----
+   Real prices from CoinGecko's free public API (no key required).
+   If the feed is unavailable we HIDE the ticker — we never display stale or invented prices. */
+const TICKER_IDS = 'bitcoin,ethereum,solana,ripple,cardano,dogecoin,binancecoin';
+
+function fmtPrice(v) {
+  if (v == null) return '—';
+  return v >= 1 ? v.toLocaleString(undefined, { maximumFractionDigits: 2 })
+                : v.toPrecision(3);
 }
+
+async function loadTicker() {
+  const el = document.getElementById('ticker');
+  const wrap = document.getElementById('tickerWrap');
+  if (!el || !wrap) return;
+  try {
+    const res = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${TICKER_IDS}&price_change_percentage=24h`);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (!Array.isArray(data) || !data.length) throw new Error('empty feed');
+    const items = data.map(c => {
+      const ch = c.price_change_percentage_24h ?? 0;
+      const dir = ch >= 0 ? 'up' : 'down';
+      return `<span>${c.symbol.toUpperCase()} $${fmtPrice(c.current_price)} ` +
+             `<span class="${dir}">${ch >= 0 ? '+' : ''}${ch.toFixed(2)}%</span></span>`;
+    }).join('');
+    el.innerHTML = items + items;  // duplicated for the seamless scroll loop
+    wrap.style.display = '';
+  } catch (err) {
+    wrap.style.display = 'none';
+    console.info('Live ticker unavailable — hiding it rather than showing fake prices.', err.message);
+  }
+}
+loadTicker();
+setInterval(loadTicker, 60000); // refresh every minute
 
 /* ---- Counters + reveal ---- */
 function animateCounters() {
